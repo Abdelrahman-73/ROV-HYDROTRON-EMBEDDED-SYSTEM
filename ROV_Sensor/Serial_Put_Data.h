@@ -1,0 +1,30 @@
+#define max_send_data 12
+int var_send_int[max_send_data+1];
+String datos;
+
+void Put_Serial_Data(char header, char delimiter, char terminator){
+  datos += header;
+
+  for(int i = 1; i <= max_send_data; i++){
+    datos += (String)var_send_int[i];
+    if(i != max_send_data) datos += delimiter;
+  }
+
+  datos += terminator;
+
+  // Switch to transmit mode
+  digitalWrite(DE, HIGH);
+  digitalWrite(RE, HIGH);
+  delayMicroseconds(100); // Allow line to settle
+
+  Serial.println(datos);  // Send data
+  Serial.flush();         // Wait until transmission complete
+
+  delayMicroseconds(100); // Ensure transmission ends before switching
+
+  // Switch back to receive mode
+  digitalWrite(DE, LOW);
+  digitalWrite(RE, LOW);
+
+  datos = ""; // Reset buffer
+}
